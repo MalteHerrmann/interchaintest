@@ -1,11 +1,14 @@
 package ibc
 
 import (
+	"context"
+	"fmt"
 	"reflect"
 	"strconv"
 
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	ibcexported "github.com/cosmos/ibc-go/v6/modules/core/03-connection/types"
+	"github.com/docker/docker/client"
 )
 
 // ChainConfig defines the chain parameters requires to run an interchaintest testnet for a chain.
@@ -163,6 +166,20 @@ func (i DockerImage) Ref() string {
 	}
 
 	return i.Repository + ":" + i.Version
+}
+
+// CheckIfDockerImageExists checks if a given DockerImage exists using the connected Docker client.
+func CheckIfDockerImageExists(ctx context.Context, cli *client.Client, image DockerImage) bool {
+	imageName := image.Ref()
+	_, _, err := cli.ImageInspectWithRaw(ctx, imageName)
+	if err != nil {
+		if client.IsErrNotFound(err) {
+			return false
+		} else {
+			panic(fmt.Sprintf("unexpected error while inspecting Docker image %q: %v", imageName, err))
+		}
+	}
+	return true
 }
 
 type WalletAmount struct {

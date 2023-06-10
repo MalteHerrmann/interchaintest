@@ -525,11 +525,14 @@ func (c *CosmosChain) pullImages(ctx context.Context, cli *client.Client) {
 			dockertypes.ImagePullOptions{},
 		)
 		if err != nil {
-			c.log.Error("Failed to pull image",
-				zap.Error(err),
-				zap.String("repository", image.Repository),
-				zap.String("tag", image.Version),
-			)
+			// NOTE: if the docker image exists locally, we don't need to raise an error
+			if !ibc.CheckIfDockerImageExists(ctx, cli, image) {
+				c.log.Error("Failed to pull image",
+					zap.Error(err),
+					zap.String("repository", image.Repository),
+					zap.String("tag", image.Version),
+				)
+			}
 		} else {
 			_, _ = io.Copy(io.Discard, rc)
 			_ = rc.Close()
@@ -663,12 +666,14 @@ func (c *CosmosChain) Start(testName string, ctx context.Context, additionalGene
 	chainCfg := c.Config()
 
 	genesisAmount := types.Coin{
-		Amount: types.NewInt(10_000_000_000_000),
+		// TODO: make this configurable
+		Amount: types.NewInt(5e18),
 		Denom:  chainCfg.Denom,
 	}
 
 	genesisSelfDelegation := types.Coin{
-		Amount: types.NewInt(5_000_000_000_000),
+		// TODO: make this configurable
+		Amount: types.NewInt(1e18),
 		Denom:  chainCfg.Denom,
 	}
 
