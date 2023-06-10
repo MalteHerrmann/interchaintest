@@ -101,3 +101,18 @@ penumbra:
       uid-gid: 1025:1025
     - repository: ghcr.io/strangelove-ventures/heighliner/penumbra
       uid-gid: 1025:1025
+
+evmos:
+  name: evmos
+  type: cosmos
+  bin: evmosd
+  bech32-prefix: evmos
+  chain-id: evmos_9000-1
+  denom: aevmos
+  gas-prices: 0.0aevmos
+  gas-adjustment: 1.3
+  trusting-period: 504h
+  images:
+    - repository: ghcr.io/strangelove-ventures/heighliner/evmos
+      uid-gid: 1025:1025
+  no-host-mount: false
