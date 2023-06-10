@@ -57,7 +57,7 @@ cd interchaintest
 make interchaintest
 ```
 
-This places the binary in `interchaintest/.bin/interchaintest`
+This places the binary in `interchaintest/bin/interchaintest`
 
 Note that this is not in your Go path.
 
