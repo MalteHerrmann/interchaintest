@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"path"
 	"strings"
 	"time"
@@ -321,14 +322,26 @@ func (r *DockerRelayer) RestoreKey(ctx context.Context, rep ibc.RelayerExecRepor
 	ctx, cancel := context.WithTimeout(ctx, time.Minute)
 	defer cancel()
 
+	log.Printf("command to restore key: %s", cmd)
 	res := r.Exec(ctx, rep, cmd, nil)
 	if res.Err != nil {
 		return res.Err
 	}
 
-	addrBytes := r.c.ParseRestoreKeyOutput(string(res.Stdout), string(res.Stderr))
+	log.Printf("stdout: %s\n", string(res.Stdout))
+	log.Printf("stderr: %s\n", string(res.Stderr))
 
-	r.wallets[chainID] = r.c.CreateWallet("", addrBytes, mnemonic)
+	addrBytes := r.c.ParseRestoreKeyOutput(string(res.Stdout), string(res.Stderr))
+	log.Printf("restored key %s on chain %s with address %s", keyName, chainID, addrBytes)
+
+	r.wallets[chainID] = r.c.CreateWallet(keyName, addrBytes, mnemonic)
+	log.Printf("created wallet for key %s for chain %s", r.wallets[chainID].Address(), chainID)
+
+	configCmd := []string{"rly", "config", "show", "--home", r.HomeDir()}
+	log.Printf("Checking relayer config: %s\n", configCmd)
+	res = r.Exec(ctx, rep, configCmd, nil)
+	log.Printf("stdout: %s\n", string(res.Stdout))
+	log.Printf("stderr: %s\n", string(res.Stderr))
 
 	return nil
 }

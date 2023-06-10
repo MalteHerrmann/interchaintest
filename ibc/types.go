@@ -43,6 +43,8 @@ type ChainConfig struct {
 	ConfigFileOverrides map[string]any
 	// Non-nil will override the encoding config, used for cosmos chains only.
 	EncodingConfig *simappparams.EncodingConfig
+	// Define any extra codes for the relayer configuration
+	ExtraCodecs []string `yaml:"extra-codecs"`
 }
 
 func (c ChainConfig) Clone() ChainConfig {

@@ -45,18 +45,19 @@ func NewCosmosRelayer(log *zap.Logger, testName string, cli *client.Client, netw
 }
 
 type CosmosRelayerChainConfigValue struct {
-	AccountPrefix  string  `json:"account-prefix"`
-	ChainID        string  `json:"chain-id"`
-	Debug          bool    `json:"debug"`
-	GRPCAddr       string  `json:"grpc-addr"`
-	GasAdjustment  float64 `json:"gas-adjustment"`
-	GasPrices      string  `json:"gas-prices"`
-	Key            string  `json:"key"`
-	KeyringBackend string  `json:"keyring-backend"`
-	OutputFormat   string  `json:"output-format"`
-	RPCAddr        string  `json:"rpc-addr"`
-	SignMode       string  `json:"sign-mode"`
-	Timeout        string  `json:"timeout"`
+	AccountPrefix  string   `json:"account-prefix"`
+	ChainID        string   `json:"chain-id"`
+	Debug          bool     `json:"debug"`
+	ExtraCodecs    []string `json:"extra-codecs"`
+	GRPCAddr       string   `json:"grpc-addr"`
+	GasAdjustment  float64  `json:"gas-adjustment"`
+	GasPrices      string   `json:"gas-prices"`
+	Key            string   `json:"key"`
+	KeyringBackend string   `json:"keyring-backend"`
+	OutputFormat   string   `json:"output-format"`
+	RPCAddr        string   `json:"rpc-addr"`
+	SignMode       string   `json:"sign-mode"`
+	Timeout        string   `json:"timeout"`
 }
 
 type CosmosRelayerChainConfig struct {
@@ -66,7 +67,7 @@ type CosmosRelayerChainConfig struct {
 
 const (
 	DefaultContainerImage   = "ghcr.io/cosmos/relayer"
-	DefaultContainerVersion = "v2.1.2"
+	DefaultContainerVersion = "v2.3.1"
 )
 
 // Capabilities returns the set of capabilities of the Cosmos relayer.
@@ -91,6 +92,7 @@ func ChainConfigToCosmosRelayerChainConfig(chainConfig ibc.ChainConfig, keyName,
 			RPCAddr:        rpcAddr,
 			GRPCAddr:       gprcAddr,
 			AccountPrefix:  chainConfig.Bech32Prefix,
+			ExtraCodecs:    chainConfig.ExtraCodecs,
 			KeyringBackend: keyring.BackendTest,
 			GasAdjustment:  chainConfig.GasAdjustment,
 			GasPrices:      chainConfig.GasPrices,

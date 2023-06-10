@@ -3,6 +3,7 @@ package interchaintest
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/docker/docker/client"
 	"github.com/strangelove-ventures/interchaintest/v6/ibc"
@@ -404,6 +405,7 @@ func (ic *Interchain) configureRelayerKeys(ctx context.Context, rep *testreporte
 
 	for r, chains := range ic.relayerChains() {
 		for _, c := range chains {
+			log.Print("configuring keys for chain: ", c.Config().Name)
 			rpcAddr, grpcAddr := c.GetRPCAddress(), c.GetGRPCAddress()
 			if !r.UseDockerNetwork() {
 				rpcAddr, grpcAddr = c.GetHostRPCAddress(), c.GetHostGRPCAddress()
